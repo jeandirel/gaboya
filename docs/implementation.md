@@ -9,9 +9,9 @@
 
 ## Ce que le code réalise réellement
 
-Le backend expose un health check, la découverte des capacités, un début de recherche sécurisée de code chauffeur sur une base PostgreSQL future et refuse les paiements et OTP non configurés.
+Le backend gère maintenant l'OTP SMS (adaptateur Twilio Verify préparé, fournisseur local isolé pour les tests), des sessions opaques hachées et révocables, les rôles, les dossiers chauffeurs et véhicules, leur contrôle administratif auditée, des QR et des intentions de paiement pending. Les écrans FlutterFlow existants utilisent ces API.
 
-**Non livrés :** authentification OTP, JWT/session, KYC, contrôles administrateur, intégration API pawaPay, webhooks, ledger en partie double transactionnel, remboursements, cash-out, billetterie, stockage et déploiement.
+**Non activés :** envoi SMS réel sans fournisseur, connexion Google, KYC automatisé et stockage documentaire, exécution pawaPay, webhooks financiers, ledger en partie double transactionnel, remboursements, cash-out, billetterie et déploiement cloud. Voir `local-development.md` pour le parcours local et `deployment.md` pour Render/Neon.
 
 ## Architecture et conditions de production
 

@@ -21,3 +21,11 @@ def get_engine():
 
 def make_session():
     return sessionmaker(bind=get_engine(), expire_on_commit=False)
+
+
+def get_db():
+    with make_session()() as db:
+        try:
+            yield db
+        finally:
+            db.rollback()

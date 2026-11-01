@@ -1,3 +1,4 @@
+import '/services/gaboya_api.dart';
 import '/flutter_flow/ff_builtin_enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -67,7 +68,26 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
                 ),
           ),
-          actions: [],
+          actions: [
+            IconButton(
+                tooltip: 'Compte chauffeur',
+                onPressed: () => context.pushNamed('DriverAccountPage'),
+                icon: const Icon(Icons.local_taxi)),
+            if (GaboyaApi.instance.isSignedIn)
+              IconButton(
+                  tooltip: 'Déconnexion',
+                  onPressed: () async {
+                    try {
+                      await GaboyaApi.instance.logout();
+                    } on ApiException catch (error) {
+                      if (context.mounted)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(error.message)));
+                    }
+                    if (context.mounted) context.goNamed('SignInPage');
+                  },
+                  icon: const Icon(Icons.logout)),
+          ],
           centerTitle: false,
           elevation: 0.0,
         ),

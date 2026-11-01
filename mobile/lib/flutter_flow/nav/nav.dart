@@ -16,6 +16,8 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'serialization_util.dart';
 
 import '/index.dart';
+import '/services/gaboya_api.dart';
+import '/driver_account_page/driver_account_page.dart';
 
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
@@ -41,10 +43,24 @@ class AppStateNotifier extends ChangeNotifier {
 GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       initialLocation: '/',
       debugLogDiagnostics: true,
-      refreshListenable: appStateNotifier,
+      refreshListenable:
+          Listenable.merge([appStateNotifier, GaboyaApi.instance]),
+      redirect: (context, state) {
+        final protected = ['/payer-taxi', '/compte-chauffeur'];
+        if (protected.contains(state.uri.path) &&
+            !GaboyaApi.instance.isSignedIn) {
+          return '/connexion';
+        }
+        return null;
+      },
       navigatorKey: appNavigatorKey,
       errorBuilder: (context, state) => HomePageWidget(),
       routes: [
+        FFRoute(
+          name: 'DriverAccountPage',
+          path: '/compte-chauffeur',
+          builder: (context, _) => const DriverAccountPage(),
+        ),
         FFRoute(
           name: '_initialize',
           path: '/',
