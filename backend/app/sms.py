@@ -19,17 +19,17 @@ def twilio_call(path: str, data: dict) -> dict:
         response.raise_for_status()
         return response.json()
     except (httpx.HTTPError, ValueError):
-        raise HTTPException(503, "Service SMS indisponible. R�essayez plus tard.") from None
+        raise HTTPException(503, "Service SMS indisponible. Réessayez plus tard.") from None
 
 
 def send_verification(phone: str, challenge_id: str) -> tuple[str | None, str | None]:
     conf = settings()
     if conf.sms_provider == "disabled":
-        raise HTTPException(503, "Fournisseur SMS non configur�. Aucun OTP envoy�.")
+        raise HTTPException(503, "Fournisseur SMS non configuré. Aucun OTP envoyé.")
     if conf.sms_provider == "twilio_verify":
         response = twilio_call("Verifications", {"To": phone, "Channel": "sms", "Locale": "fr"})
         if response.get("status") != "pending" or not response.get("sid"):
-            raise HTTPException(503, "Envoi SMS non confirm� par le fournisseur")
+            raise HTTPException(503, "Envoi SMS non confirmé par le fournisseur")
         return response["sid"], None
     code = f"{secrets.randbelow(1000000):06d}"
     conf.test_sms_dir.mkdir(mode=0o700, parents=True, exist_ok=True)

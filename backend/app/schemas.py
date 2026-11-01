@@ -11,7 +11,7 @@ def normalize_phone(value: str) -> str:
     if re.fullmatch(r"0[67]\d{7}", value):
         value = "+241" + value[1:]
     if not re.fullmatch(r"\+241[67]\d{7}", value):
-        raise ValueError("Num�ro mobile gabonais attendu : +241 suivi de 8 chiffres (6 ou 7)")
+        raise ValueError("Numéro mobile gabonais attendu : +241 suivi de 8 chiffres (6 ou 7)")
     return value
 
 

@@ -66,7 +66,7 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
   Future<void> _scan() async {
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Sur le web, saisissez le code imprim� sous le QR.')));
+          content: Text('Sur le web, saisissez le code imprimé sous le QR.')));
       return;
     }
     try {
@@ -78,7 +78,7 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
       if (mounted)
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content:
-                Text('Cam�ra indisponible. Saisissez le code chauffeur.')));
+                Text('Caméra indisponible. Saisissez le code chauffeur.')));
     }
   }
 
@@ -101,16 +101,16 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
     final accepted = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-                title: const Text('Pr�parer votre paiement'),
+                title: const Text('Préparer votre paiement'),
                 content: Text(
-                    '${_driver!['display_name']} � ${_driver!['vehicle']['license_plate']}\n$amount FCFA\nAucun d�bit ne sera effectu�. pawaPay sera disponible apr�s int�gration.'),
+                    '${_driver!['display_name']} • ${_driver!['vehicle']['license_plate']}\n$amount FCFA\nAucun débit ne sera effectué. pawaPay sera disponible après intégration.'),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(context, false),
                       child: const Text('Annuler')),
                   TextButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Pr�parer'))
+                      child: const Text('Préparer'))
                 ]));
     if (accepted != true || !mounted) return;
     final fingerprint = '$_resolvedCode:$amount';
@@ -250,7 +250,7 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                                   ),
                             ),
                             Text(
-                              'V�rifiez son identit� avant de saisir le montant.',
+                              'Vérifiez son identité avant de saisir le montant.',
                               style: FlutterFlowTheme.of(context)
                                   .brandBody
                                   .override(
@@ -464,7 +464,7 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                             ),
                             Expanded(
                               child: Text(
-                                'Aucun d�bit disponible pour le moment. Une intention de paiement ne constitue jamais une confirmation de paiement.',
+                                'Aucun débit disponible pour le moment. Une intention de paiement ne constitue jamais une confirmation de paiement.',
                                 style: FlutterFlowTheme.of(context)
                                     .brandCaption
                                     .override(
@@ -500,7 +500,7 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                                       Icon(Icons.verified,
                                           color: Color(0xFF125C45)),
                                       SizedBox(width: 8),
-                                      Text('Chauffeur approuv�')
+                                      Text('Chauffeur approuvé')
                                     ]),
                                     Text(_driver!['display_name'],
                                         style: FlutterFlowTheme.of(context)
@@ -516,19 +516,19 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                        'Intention enregistr�e � paiement non effectu�'),
+                                        'Intention enregistrée — paiement non effectué'),
                                     Text('${_intent!['amount_xaf']} FCFA'),
-                                    Text('R�f�rence : ${_intent!['id']}'),
+                                    Text('Référence : ${_intent!['id']}'),
                                     const Text(
-                                        'pawaPay indisponible. Aucun montant d�bit�.'),
+                                        'pawaPay indisponible. Aucun montant débité.'),
                                   ]))),
                     FFButtonWidget(
                       onPressed: _busy ? null : _prepare,
                       text: _busy
-                          ? 'Patientez�'
+                          ? 'Patientez…'
                           : (_driver == null
-                              ? 'V�rifier le chauffeur'
-                              : 'Pr�parer le paiement'),
+                              ? 'Vérifier le chauffeur'
+                              : 'Préparer le paiement'),
                       options: FFButtonOptions(
                         width: double.infinity,
                         height: 54.0,

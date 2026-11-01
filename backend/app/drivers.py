@@ -44,7 +44,7 @@ def resolve(db: Session, code: str, lock: bool = False) -> Driver:
 def apply_driver(payload: DriverInput, user: User = Depends(current_user), db: Session = Depends(get_db)):
     db.scalar(select(User).where(User.id == user.id).with_for_update())
     if db.scalar(select(Driver.id).where(Driver.user_id == user.id)):
-        raise HTTPException(409, "Profil chauffeur d�j� cr��")
+        raise HTTPException(409, "Profil chauffeur déjà créé")
     user.display_name = payload.display_name
     driver = Driver(user_id=user.id)
     db.add(driver)
@@ -56,7 +56,7 @@ def apply_driver(payload: DriverInput, user: User = Depends(current_user), db: S
         db.commit()
     except IntegrityError:
         db.rollback()
-        raise HTTPException(409, "V�hicule d�j� enregistr�") from None
+        raise HTTPException(409, "Véhicule déjà enregistré") from None
     return driver_data(db, driver, True)
 
 
@@ -91,7 +91,7 @@ def update_driver(payload: DriverInput, user: User = Depends(current_user), db: 
         db.commit()
     except IntegrityError:
         db.rollback()
-        raise HTTPException(409, "V�hicule d�j� enregistr�") from None
+        raise HTTPException(409, "Véhicule déjà enregistré") from None
     return driver_data(db, driver, True)
 
 
@@ -129,7 +129,7 @@ def review_driver(driver_id: str, payload: DriverReview, admin: User = Depends(a
     if driver.user_id == admin.id:
         raise HTTPException(403, "Un administrateur ne peut pas approuver son propre profil")
     if payload.status == "approved" and not driver_data(db, driver)["vehicle"]:
-        raise HTTPException(409, "V�hicule requis")
+        raise HTTPException(409, "Véhicule requis")
     driver.status = payload.status
     driver.reviewed_by, driver.reviewed_at, driver.review_note = admin.id, now(), payload.note
     db.execute(update(DriverCode).where(DriverCode.driver_id == driver.id).values(active=False))
@@ -152,7 +152,7 @@ def assign_role(user_id: str, payload: RoleInput, admin: User = Depends(admin_us
     if not user:
         raise HTTPException(404, "Utilisateur introuvable")
     if user.id == admin.id and payload.role == "admin" and not payload.enabled:
-        raise HTTPException(409, "Retrait de votre propre r�le administrateur interdit")
+        raise HTTPException(409, "Retrait de votre propre rôle administrateur interdit")
     assignment = db.get(RoleAssignment, (user.id, payload.role))
     if payload.enabled and not assignment:
         db.add(RoleAssignment(user_id=user.id, role=payload.role))

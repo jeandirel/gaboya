@@ -23,7 +23,7 @@ def settings() -> Settings:
     if env not in {"test", "development", "production"}:
         raise RuntimeError("APP_ENV invalide")
     if len(secret) < 32:
-        raise RuntimeError("APP_SECRET doit contenir au moins 32 caract�res al�atoires")
+        raise RuntimeError("APP_SECRET doit contenir au moins 32 caractères aléatoires")
     if provider not in {"disabled", "test", "twilio_verify"}:
         raise RuntimeError("SMS_PROVIDER invalide")
     if provider == "test":
@@ -32,7 +32,7 @@ def settings() -> Settings:
                 or not (url.database or "").endswith("_test")
                 or url.host not in {"localhost", "127.0.0.1", "::1"}
                 or os.getenv("RENDER")):
-            raise RuntimeError("SMS de test limit� � APP_ENV=test et PostgreSQL local *_test")
+            raise RuntimeError("SMS de test limité à APP_ENV=test et PostgreSQL local *_test")
     result = Settings(env, secret, provider,
                       Path(os.getenv("TEST_SMS_DIR", ".otp-inbox")),
                       os.getenv("TWILIO_ACCOUNT_SID", ""),

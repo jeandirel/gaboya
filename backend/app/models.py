@@ -1,4 +1,4 @@
-"""Sch�ma initial : pas de portefeuille r�glement� actif."""
+"""Schéma initial : pas de portefeuille réglementé actif."""
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import String, ForeignKey, Integer, DateTime, CheckConstraint, UniqueConstraint, Index, text

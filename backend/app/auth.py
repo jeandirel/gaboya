@@ -54,7 +54,7 @@ def limit(db: DbSession, key: str, maximum: int, cooldown: int = 0):
         row.window_start = timestamp
     if row.count >= maximum or timestamp - row.last_at < timedelta(seconds=cooldown):
         db.commit()
-        raise HTTPException(429, "Trop de tentatives. R�essayez plus tard.", headers={"Retry-After": "60"})
+        raise HTTPException(429, "Trop de tentatives. Réessayez plus tard.", headers={"Retry-After": "60"})
     row.count += 1
     row.last_at = timestamp
 
@@ -93,7 +93,7 @@ def verify_otp(payload: OtpVerify, request: Request, db: DbSession = Depends(get
     db.commit()
     challenge = db.scalar(select(OtpChallenge).where(OtpChallenge.id == payload.challenge_id).with_for_update())
     if not challenge or challenge.consumed_at or challenge.expires_at <= now() or challenge.attempts >= 5:
-        raise HTTPException(400, "Code invalide, expir� ou d�j� utilis�")
+        raise HTTPException(400, "Code invalide, expiré ou déjà utilisé")
     challenge.attempts += 1
     valid = False
     if challenge.provider == settings().sms_provider == "test" and challenge.code_hash:
@@ -106,7 +106,7 @@ def verify_otp(payload: OtpVerify, request: Request, db: DbSession = Depends(get
             raise
     if not valid:
         db.commit()
-        raise HTTPException(400, "Code invalide, expir� ou d�j� utilis�")
+        raise HTTPException(400, "Code invalide, expiré ou déjà utilisé")
     challenge.consumed_at = now()
     db.execute(insert(User).values(id=new_id(), phone_e164=challenge.phone,
                                    display_name=payload.display_name, enabled=True, created_at=now())
@@ -114,7 +114,7 @@ def verify_otp(payload: OtpVerify, request: Request, db: DbSession = Depends(get
     user = db.scalar(select(User).where(User.phone_e164 == challenge.phone).with_for_update())
     if not user.enabled:
         db.commit()
-        raise HTTPException(403, "Compte d�sactiv�")
+        raise HTTPException(403, "Compte désactivé")
     db.execute(insert(RoleAssignment).values(user_id=user.id, role="passenger").on_conflict_do_nothing())
     data = issue_session(db, user)
     db.commit()
@@ -127,7 +127,7 @@ def current_session(credentials: HTTPAuthorizationCredentials | None = Depends(b
         raise HTTPException(401, "Connexion requise", headers={"WWW-Authenticate": "Bearer"})
     session = db.scalar(select(Session).where(Session.access_hash == digest(credentials.credentials)))
     if not session or session.revoked_at or session.access_expires_at <= now():
-        raise HTTPException(401, "Session expir�e ou r�voqu�e", headers={"WWW-Authenticate": "Bearer"})
+        raise HTTPException(401, "Session expirée ou révoquée", headers={"WWW-Authenticate": "Bearer"})
     user = db.get(User, session.user_id)
     if not user or not user.enabled:
         raise HTTPException(401, "Compte indisponible")
@@ -160,7 +160,7 @@ def refresh(payload: RefreshRequest, db: DbSession = Depends(get_db)):
     if old.revoked_at or old.refresh_expires_at <= now() or not user.enabled:
         db.execute(update(Session).where(Session.family_id == old.family_id).values(revoked_at=now()))
         db.commit()
-        raise HTTPException(401, "Session r�voqu�e ; reconnectez-vous")
+        raise HTTPException(401, "Session révoquée ; reconnectez-vous")
     old.revoked_at = now()
     result = issue_session(db, user, old.family_id, old.refresh_expires_at)
     db.commit()

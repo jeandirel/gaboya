@@ -1,4 +1,4 @@
-"""Connexion PostgreSQL c�t� serveur uniquement."""
+"""Connexion PostgreSQL côté serveur uniquement."""
 import os
 from functools import lru_cache
 from sqlalchemy import create_engine

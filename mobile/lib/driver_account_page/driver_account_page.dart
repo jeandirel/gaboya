@@ -104,12 +104,12 @@ class _DriverAccountPageState extends State<DriverAccountPage> {
                   : 'Suspendre ce chauffeur'),
               content: Column(mainAxisSize: MainAxisSize.min, children: [
                 Text(
-                    '${driver['display_name']} � ${driver['vehicle']?['license_plate'] ?? ''}'),
+                    '${driver['display_name']} • ${driver['vehicle']?['license_plate'] ?? ''}'),
                 TextField(
                     controller: note,
                     maxLength: 500,
                     decoration:
-                        const InputDecoration(labelText: 'Motif du contr�le')),
+                        const InputDecoration(labelText: 'Motif du contrôle')),
               ]),
               actions: [
                 TextButton(
@@ -147,16 +147,16 @@ class _DriverAccountPageState extends State<DriverAccountPage> {
   }
 
   String? _required(String? value) =>
-      (value?.trim().length ?? 0) < 3 ? 'Au moins 3 caract�res' : null;
+      (value?.trim().length ?? 0) < 3 ? 'Au moins 3 caractères' : null;
 
   @override
   Widget build(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
     const statuses = {
-      'pending_review': 'En cours de v�rification',
-      'approved': 'Chauffeur approuv�',
+      'pending_review': 'En cours de vérification',
+      'approved': 'Chauffeur approuvé',
       'suspended': 'Compte chauffeur suspendu',
-      'rejected': 'Dossier � corriger'
+      'rejected': 'Dossier à corriger'
     };
     return Scaffold(
       backgroundColor: theme.primaryBackground,
@@ -190,7 +190,7 @@ class _DriverAccountPageState extends State<DriverAccountPage> {
                               backgroundColor: Colors.white),
                           SelectableText(_driver!['qr_code']),
                           const Text(
-                              'Ce QR identifie votre profil approuv�. Il ne confirme aucun paiement.'),
+                              'Ce QR identifie votre profil approuvé. Il ne confirme aucun paiement.'),
                         ]))),
               if ((_driver?['review_note'] ?? '').isNotEmpty)
                 Text(_driver!['review_note']),
@@ -202,7 +202,7 @@ class _DriverAccountPageState extends State<DriverAccountPage> {
                         validator: _required,
                         maxLength: 160,
                         decoration:
-                            const InputDecoration(labelText: 'Nom affich�')),
+                            const InputDecoration(labelText: 'Nom affiché')),
                     TextFormField(
                         controller: _plate,
                         validator: _required,
@@ -214,7 +214,7 @@ class _DriverAccountPageState extends State<DriverAccountPage> {
                         validator: _required,
                         maxLength: 140,
                         decoration: const InputDecoration(
-                            labelText: 'Marque, mod�le et couleur')),
+                            labelText: 'Marque, modèle et couleur')),
                     const SizedBox(height: 16),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -225,13 +225,13 @@ class _DriverAccountPageState extends State<DriverAccountPage> {
                             : _save,
                         child: Text(_driver == null
                             ? 'Soumettre mon dossier'
-                            : 'Mettre � jour et soumettre')),
+                            : 'Mettre à jour et soumettre')),
                     const Text(
-                        'Toute modification du v�hicule ou du nom exige un nouveau contr�le et d�sactive le QR pr�c�dent.'),
+                        'Toute modification du véhicule ou du nom exige un nouveau contrôle et désactive le QR précédent.'),
                   ])),
               if (_api.roles.contains('admin')) ...[
                 const SizedBox(height: 24),
-                Text('Contr�le des chauffeurs', style: theme.titleLarge),
+                Text('Contrôle des chauffeurs', style: theme.titleLarge),
                 for (final driver in _queue)
                   Card(
                       child: Padding(
@@ -240,9 +240,9 @@ class _DriverAccountPageState extends State<DriverAccountPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    '${driver['display_name']} � ${statuses[driver['status']]}'),
+                                    '${driver['display_name']} • ${statuses[driver['status']]}'),
                                 Text(
-                                    '${driver['vehicle']?['license_plate']} � ${driver['vehicle']?['description']}'),
+                                    '${driver['vehicle']?['license_plate']} — ${driver['vehicle']?['description']}'),
                                 if (driver['user_id'] != _api.user?['id'])
                                   Wrap(children: [
                                     TextButton(

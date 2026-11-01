@@ -1,4 +1,4 @@
-"""Alembic configuration : exige une URL de base de d�veloppement."""
+"""Alembic configuration : exige une URL de base de développement."""
 import os
 from logging.config import fileConfig
 from alembic import context

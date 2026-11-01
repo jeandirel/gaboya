@@ -15,7 +15,7 @@ from app.models import RoleAssignment
 def migrated_database():
     url = make_url(os.environ["DATABASE_URL"])
     if url.host not in {"localhost", "127.0.0.1", "::1"} or not (url.database or "").endswith("_test"):
-        raise RuntimeError("Tests destructifs r�serv�s � une base PostgreSQL locale *_test")
+        raise RuntimeError("Tests destructifs réservés à une base PostgreSQL locale *_test")
     if os.environ.get("APP_ENV") != "test":
         raise RuntimeError("APP_ENV=test requis")
     command.upgrade(Config("alembic.ini"), "head")
@@ -78,7 +78,7 @@ def approved_driver(client, account):
     assert data.status_code == 201, data.text
     driver_id = data.json()["driver_id"]
     approved = client.post(f"/v1/admin/drivers/{driver_id}/review", headers=admin_headers,
-                           json={"status": "approved", "note": "Documents de test contr�l�s"})
+                           json={"status": "approved", "note": "Documents de test contrôlés"})
     assert approved.status_code == 200, approved.text
     return {"driver": approved.json(), "driver_headers": driver_headers, "driver_account": driver_account,
             "passenger_headers": passenger_headers, "passenger": passenger,

@@ -33,20 +33,20 @@ def test_full_flow_approved_driver_qr_and_pending_payment(client, approved_drive
 def test_pending_and_self_approval_are_blocked(client, account):
     _, headers = account(admin=True)
     driver = client.post("/v1/drivers", headers=headers, json={"display_name": "Test chauffeur",
-                      "vehicle": {"license_plate": "TEST-002", "description": "V�hicule test"}}).json()
+                      "vehicle": {"license_plate": "TEST-002", "description": "Véhicule test"}}).json()
     assert driver["status"] == "pending_review" and driver["qr_code"] is None
     assert client.get("/v1/drivers/me/qr.svg", headers=headers).status_code == 409
     assert client.post(f"/v1/admin/drivers/{driver['driver_id']}/review", headers=headers,
                        json={"status": "approved", "note": "Self review"}).status_code == 403
     assert client.post("/v1/drivers", headers=headers, json={"display_name": "Duplicata",
-                      "vehicle": {"license_plate": "TEST-003", "description": "Autre v�hicule"}}).status_code == 409
+                      "vehicle": {"license_plate": "TEST-003", "description": "Autre véhicule"}}).status_code == 409
 
 
 def test_suspension_and_vehicle_change_invalidate_qr(client, approved_driver):
     flow = approved_driver
     code = flow["driver"]["qr_code"]
     changed = client.put("/v1/drivers/me", headers=flow["driver_headers"], json={
-        "display_name": "Chauffeur modifi�", "vehicle": {"license_plate": "TEST-004", "description": "Nouveau v�hicule"}})
+        "display_name": "Chauffeur modifié", "vehicle": {"license_plate": "TEST-004", "description": "Nouveau véhicule"}})
     assert changed.status_code == 200
     assert changed.json()["status"] == "pending_review" and changed.json()["qr_code"] is None
     assert client.get("/v1/drivers/resolve/" + code, headers=flow["passenger_headers"]).status_code == 404

@@ -15,12 +15,12 @@ def main():
     with make_session()() as db:
         user = db.scalar(select(User).where(User.phone_e164 == phone).with_for_update())
         if not user or not user.enabled:
-            parser.error('Un compte actif d�j� v�rifi� par OTP est requis')
+            parser.error('Un compte actif déjà vérifié par OTP est requis')
         if not db.get(RoleAssignment, (user.id, 'admin')):
             db.add(RoleAssignment(user_id=user.id, role='admin'))
             db.add(AuditLog(actor_id=user.id, action='admin.bootstrap.cli', target_id=user.id))
             db.commit()
-    print('R�le administrateur attribu� au compte v�rifi� (audit enregistr�).')
+    print('Rôle administrateur attribué au compte vérifié (audit enregistré).')
 
 
 if __name__ == '__main__':

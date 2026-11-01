@@ -67,4 +67,3 @@ jobs:
           --dart-define=GABOYA_DEMO_FILE=/tmp/gaboya-demo.json
       - name: Build web preview
         run: flutter build web --release
-

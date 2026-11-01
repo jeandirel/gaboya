@@ -16,7 +16,7 @@ def intent_data(intent: PaymentIntent):
     return {"id": intent.id, "driver_id": intent.driver_id, "amount_xaf": intent.amount_xaf,
             "currency": "XAF", "status": intent.status, "provider": intent.provider,
             "can_pay": False, "provider_confirmed": False,
-            "message": "Intention enregistr�e. Aucun d�bit : int�gration pawaPay indisponible."}
+            "message": "Intention enregistrée. Aucun débit : intégration pawaPay indisponible."}
 
 
 @router.post("/payments/intents", status_code=201)
@@ -25,12 +25,12 @@ def create_intent(payload: PaymentRequest, user: User = Depends(current_user),
                   db: Session = Depends(get_db)):
     driver = resolve(db, payload.driver_code, lock=True)
     if driver.user_id == user.id:
-        raise HTTPException(422, "Vous ne pouvez pas vous payer vous-m�me")
+        raise HTTPException(422, "Vous ne pouvez pas vous payer vous-même")
     key = digest(f"intent:{user.id}:{idempotency_key}")
     existing = db.scalar(select(PaymentIntent).where(PaymentIntent.idempotency_key == key))
     if existing:
         if existing.driver_id != driver.id or existing.amount_xaf != payload.amount_xaf:
-            raise HTTPException(409, "Cl� d�idempotence d�j� utilis�e pour un autre paiement")
+            raise HTTPException(409, "Clé d’idempotence déjà utilisée pour un autre paiement")
         return intent_data(existing)
     intent = PaymentIntent(passenger_id=user.id, driver_id=driver.id, amount_xaf=payload.amount_xaf,
                            provider="unconfigured", idempotency_key=key, status="pending")
@@ -41,7 +41,7 @@ def create_intent(payload: PaymentRequest, user: User = Depends(current_user),
         db.rollback()
         existing = db.scalar(select(PaymentIntent).where(PaymentIntent.idempotency_key == key))
         if not existing or existing.driver_id != driver.id or existing.amount_xaf != payload.amount_xaf:
-            raise HTTPException(409, "Conflit d�idempotence") from None
+            raise HTTPException(409, "Conflit d’idempotence") from None
         return intent_data(existing)
     return intent_data(intent)
 

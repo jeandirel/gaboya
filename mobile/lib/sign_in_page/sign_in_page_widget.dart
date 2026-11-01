@@ -150,7 +150,7 @@ class _SignInPageWidgetState extends State<SignInPageWidget> {
                               size: 32.0,
                             ),
                             Text(
-                              'Votre num�ro, votre compte.',
+                              'Votre numéro, votre compte.',
                               style: FlutterFlowTheme.of(context)
                                   .brandTitle
                                   .override(
@@ -171,7 +171,7 @@ class _SignInPageWidgetState extends State<SignInPageWidget> {
                                   ),
                             ),
                             Text(
-                              'Nous vous enverrons un code de v�rification pour s�curiser votre acc�s.',
+                              'Nous vous enverrons un code de vérification pour sécuriser votre accès.',
                               style: FlutterFlowTheme.of(context)
                                   .brandBody
                                   .override(
@@ -212,7 +212,7 @@ class _SignInPageWidgetState extends State<SignInPageWidget> {
                             focusNode: _model.phoneNumberFocusNode,
                             obscureText: false,
                             decoration: InputDecoration(
-                              labelText: 'Num�ro de t�l�phone',
+                              labelText: 'Numéro de téléphone',
                               hintText: '+241 77 12 34 56',
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -291,8 +291,8 @@ class _SignInPageWidgetState extends State<SignInPageWidget> {
                             Expanded(
                               child: Text(
                                 _delivery == 'test_inbox'
-                                    ? 'Environnement de test isol� : r�cup�rez le code dans la bo�te SMS locale. Aucun SMS r�el envoy�.'
-                                    : 'Votre acc�s est s�curis� par un code SMS � usage unique. Ne partagez jamais ce code.',
+                                    ? 'Environnement de test isolé : récupérez le code dans la boîte SMS locale. Aucun SMS réel envoyé.'
+                                    : 'Votre accès est sécurisé par un code SMS à usage unique. Ne partagez jamais ce code.',
                                 style: FlutterFlowTheme.of(context)
                                     .brandCaption
                                     .override(
@@ -324,7 +324,7 @@ class _SignInPageWidgetState extends State<SignInPageWidget> {
                           autofillHints: const [AutofillHints.oneTimeCode],
                           maxLength: 6,
                           decoration: const InputDecoration(
-                              labelText: 'Code de v�rification � 6 chiffres'),
+                              labelText: 'Code de vérification à 6 chiffres'),
                           onSubmitted: (_) => _submit()),
                       TextButton(
                           onPressed: _busy
@@ -337,15 +337,15 @@ class _SignInPageWidgetState extends State<SignInPageWidget> {
                                   });
                                 },
                           child: const Text(
-                              'Modifier le num�ro ou renvoyer le code')),
+                              'Modifier le numéro ou renvoyer le code')),
                     ],
                     FFButtonWidget(
                       onPressed: _busy ? null : _submit,
                       text: _busy
-                          ? 'Patientez�'
+                          ? 'Patientez…'
                           : (_challenge == null
                               ? 'Recevoir le code'
-                              : 'V�rifier et continuer'),
+                              : 'Vérifier et continuer'),
                       options: FFButtonOptions(
                         width: double.infinity,
                         height: 54.0,

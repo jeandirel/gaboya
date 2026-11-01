@@ -79,7 +79,7 @@ class GaboyaApi extends ChangeNotifier {
                 !kReleaseMode &&
                 uri.scheme == 'http' &&
                 localHosts.contains(uri.host)))) {
-      throw ApiException('Adresse s�curis�e de l�API GABOYA non configur�e.');
+      throw ApiException('Adresse sécurisée de l’API GABOYA non configurée.');
     }
     return Uri.parse('${baseUrl.replaceAll(RegExp(r"/+$"), "")}$path');
   }
@@ -117,18 +117,18 @@ class GaboyaApi extends ChangeNotifier {
             : jsonDecode(utf8.decode(response.bodyBytes));
       } on FormatException {
         throw ApiException(
-            'R�ponse du serveur illisible.', response.statusCode);
+            'Réponse du serveur illisible.', response.statusCode);
       }
       if (response.statusCode >= 400) {
         if (response.statusCode == 401 && auth) await _clearSession();
         final detail = data is Map ? data['detail'] : null;
         throw ApiException(
-            detail is String ? detail : 'V�rifiez les informations saisies.',
+            detail is String ? detail : 'Vérifiez les informations saisies.',
             response.statusCode);
       }
       return data;
     } on TimeoutException {
-      throw ApiException('Le serveur ne r�pond pas. R�essayez.');
+      throw ApiException('Le serveur ne répond pas. Réessayez.');
     } on http.ClientException {
       throw ApiException('Connexion au serveur impossible.');
     }
@@ -209,7 +209,7 @@ class GaboyaApi extends ChangeNotifier {
     final code = scanned.trim().toUpperCase();
     if (!RegExp(r'^GBY-[A-Z0-9]{4,16}$').hasMatch(code)) {
       throw ApiException(
-          'Ce QR code n�est pas un identifiant chauffeur GABOYA.');
+          'Ce QR code n’est pas un identifiant chauffeur GABOYA.');
     }
     return code;
   }

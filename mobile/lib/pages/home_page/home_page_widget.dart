@@ -75,7 +75,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 icon: const Icon(Icons.local_taxi)),
             if (GaboyaApi.instance.isSignedIn)
               IconButton(
-                  tooltip: 'D�connexion',
+                  tooltip: 'Déconnexion',
                   onPressed: () async {
                     try {
                       await GaboyaApi.instance.logout();
@@ -237,7 +237,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           ].divide(SizedBox(width: 6.0)),
                         ),
                         Text(
-                          'Votre trajet,\nen toute simplicit�.',
+                          'Votre trajet,\nen toute simplicité.',
                           style: FlutterFlowTheme.of(context)
                               .headlineSmall
                               .override(
@@ -430,7 +430,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'La r�servation de car arrive bient�t',
+                                'La réservation de car arrive bientôt',
                                 style: TextStyle(),
                               ),
                               duration: Duration(milliseconds: 4000),
@@ -493,7 +493,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       ),
                                 ),
                                 Text(
-                                  'Bient�t disponible',
+                                  'Bientôt disponible',
                                   style: FlutterFlowTheme.of(context)
                                       .brandCaption
                                       .override(
@@ -552,7 +552,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
-                                'Un paiement clair et v�rifi�',
+                                'Un paiement clair et vérifié',
                                 style: FlutterFlowTheme.of(context)
                                     .titleSmall
                                     .override(
@@ -574,7 +574,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     ),
                               ),
                               Text(
-                                'Ne confirmez jamais un paiement sur la seule base d�un SMS.',
+                                'Ne confirmez jamais un paiement sur la seule base d’un SMS.',
                                 style: FlutterFlowTheme.of(context)
                                     .brandCaption
                                     .override(
@@ -642,7 +642,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         size: 20.0,
                       ),
                       Text(
-                        'Activit�',
+                        'Activité',
                         style: FlutterFlowTheme.of(context)
                             .brandCaption
                             .override(
