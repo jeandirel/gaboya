@@ -32,6 +32,8 @@ def clean_database(migrated_database, monkeypatch, tmp_path):
     with get_engine().begin() as connection:
         connection.execute(text("TRUNCATE " + tables + " CASCADE"))
     yield
+    with get_engine().begin() as connection:
+        connection.execute(text("TRUNCATE " + tables + " CASCADE"))
 
 
 @pytest.fixture

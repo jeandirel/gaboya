@@ -83,13 +83,14 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
   }
 
   Future<void> _prepare() async {
-    if (_busy || !_model.formKey.currentState!.validate()) return;
+    if (_busy) return;
     if (_driver == null ||
         _resolvedCode !=
             _model.driverCodeTextController!.text.trim().toUpperCase()) {
       await _lookup(_model.driverCodeTextController!.text);
       return;
     }
+    if (!_model.formKey.currentState!.validate()) return;
     final amount = int.tryParse(_model.amountXafTextController!.text.trim());
     if (amount == null || amount < 1 || amount > 250000) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
