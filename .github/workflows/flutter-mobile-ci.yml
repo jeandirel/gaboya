@@ -1,17 +1,36 @@
 name: Flutter mobile validation
 on:
   push:
-    branches:
-      - 'integration/flutterflow-mobile-*'
-    paths:
-      - 'mobile/**'
-      - '.github/workflows/flutter-mobile-ci.yml'
+    branches: [main, 'integration/**']
+    paths: ['mobile/**', '.github/workflows/flutter-mobile-ci.yml']
+  pull_request:
+    branches: [main]
+    paths: ['mobile/**', '.github/workflows/flutter-mobile-ci.yml']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   flutter-check:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: gaboya_test
+          POSTGRES_USER: gaboya
+          POSTGRES_PASSWORD: ci-only-local-postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U gaboya -d gaboya_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://gaboya:ci-only-local-postgres@127.0.0.1:5432/gaboya_test
+      APP_ENV: test
+      APP_SECRET: ci-only-synthetic-secret-never-use-in-production-123456
+      SMS_PROVIDER: test
+      ALLOW_TEST_SMS: '1'
+      TEST_SMS_DIR: ${{ runner.temp }}/gaboya-sms
+      DEMO_OUTPUT: ${{ runner.temp }}/gaboya-demo.json
     defaults:
       run:
         working-directory: mobile
@@ -21,13 +40,30 @@ jobs:
         with:
           channel: stable
           cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Start isolated API with approved demo driver
+        working-directory: backend
+        run: |
+          pip install -r requirements.lock
+          python -m alembic upgrade head
+          python scripts/seed_demo.py
+          nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 > "${RUNNER_TEMP}/gaboya-api.log" 2>&1 &
+          curl --fail --silent --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:8000/readyz
       - name: Flutter SDK
         run: flutter --version
       - name: Resolve dependencies
         run: flutter pub get
       - name: Static analysis
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
-      - name: Flutter tests
+      - name: API and Flutter tests
         run: flutter test
+      - name: Real Flutter client to FastAPI and PostgreSQL
+        run: >-
+          flutter test test/live_api_flow_test.dart
+          --dart-define=GABOYA_RUN_LIVE_TESTS=true
+          --dart-define=GABOYA_TEST_SMS_DIR=${{ runner.temp }}/gaboya-sms
+          --dart-define=GABOYA_DEMO_FILE=${{ runner.temp }}/gaboya-demo.json
       - name: Build web preview
         run: flutter build web --release

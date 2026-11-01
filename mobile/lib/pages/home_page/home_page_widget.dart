@@ -1,3 +1,4 @@
+import '/services/gaboya_api.dart';
 import '/flutter_flow/ff_builtin_enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -67,7 +68,26 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
                 ),
           ),
-          actions: [],
+          actions: [
+            IconButton(
+                tooltip: 'Compte chauffeur',
+                onPressed: () => context.pushNamed('DriverAccountPage'),
+                icon: const Icon(Icons.local_taxi)),
+            if (GaboyaApi.instance.isSignedIn)
+              IconButton(
+                  tooltip: 'D�connexion',
+                  onPressed: () async {
+                    try {
+                      await GaboyaApi.instance.logout();
+                    } on ApiException catch (error) {
+                      if (context.mounted)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(error.message)));
+                    }
+                    if (context.mounted) context.goNamed('SignInPage');
+                  },
+                  icon: const Icon(Icons.logout)),
+          ],
           centerTitle: false,
           elevation: 0.0,
         ),
@@ -217,7 +237,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           ].divide(SizedBox(width: 6.0)),
                         ),
                         Text(
-                          'Votre trajet,\nen toute simplicité.',
+                          'Votre trajet,\nen toute simplicit�.',
                           style: FlutterFlowTheme.of(context)
                               .headlineSmall
                               .override(
@@ -410,7 +430,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'La réservation de car arrive bientôt',
+                                'La r�servation de car arrive bient�t',
                                 style: TextStyle(),
                               ),
                               duration: Duration(milliseconds: 4000),
@@ -473,7 +493,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       ),
                                 ),
                                 Text(
-                                  'Bientôt disponible',
+                                  'Bient�t disponible',
                                   style: FlutterFlowTheme.of(context)
                                       .brandCaption
                                       .override(
@@ -532,7 +552,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
-                                'Un paiement clair et vérifié',
+                                'Un paiement clair et v�rifi�',
                                 style: FlutterFlowTheme.of(context)
                                     .titleSmall
                                     .override(
@@ -554,7 +574,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     ),
                               ),
                               Text(
-                                'Ne confirmez jamais un paiement sur la seule base d’un SMS.',
+                                'Ne confirmez jamais un paiement sur la seule base d�un SMS.',
                                 style: FlutterFlowTheme.of(context)
                                     .brandCaption
                                     .override(
@@ -622,7 +642,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         size: 20.0,
                       ),
                       Text(
-                        'Activité',
+                        'Activit�',
                         style: FlutterFlowTheme.of(context)
                             .brandCaption
                             .override(

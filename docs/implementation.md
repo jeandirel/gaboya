@@ -1,26 +1,26 @@
-# GABOYA — feuille de route technique
+# GABOYA � feuille de route technique
 
 ## Existant
 
-- FlutterFlow : `gaboya-nsii4x`, thèmes, accueil, écran de connexion non branché et scanner natif ; ne pas écraser.
-- GitHub : `jeandirel/gaboya` ; le dépôt était vide puis initialisé.
-- Neon : organisation existante gérée par Vercel ; création de nouveau projet refusée. **Ne pas réutiliser une base tierce**.
-- Render : workspace accessible, aucun backend GABOYA déployé à ce stade.
+- FlutterFlow : `gaboya-nsii4x`, th�mes, accueil, �cran de connexion non branch� et scanner natif ; ne pas �craser.
+- GitHub : `jeandirel/gaboya` ; le d�p�t �tait vide puis initialis�.
+- Neon : organisation existante g�r�e par Vercel ; cr�ation de nouveau projet refus�e. **Ne pas r�utiliser une base tierce**.
+- Render : workspace accessible, aucun backend GABOYA d�ploy� � ce stade.
 
-## Ce que le code réalise réellement
+## Ce que le code r�alise r�ellement
 
-Le backend expose un health check, la découverte des capacités, un début de recherche sécurisée de code chauffeur sur une base PostgreSQL future et refuse les paiements et OTP non configurés.
+Le backend g�re maintenant l'OTP SMS (adaptateur Twilio Verify pr�par�, fournisseur local isol� pour les tests), des sessions opaques hach�es et r�vocables, les r�les, les dossiers chauffeurs et v�hicules, leur contr�le administratif audit�e, des QR et des intentions de paiement pending. Les �crans FlutterFlow existants utilisent ces API.
 
-**Non livrés :** authentification OTP, JWT/session, KYC, contrôles administrateur, intégration API pawaPay, webhooks, ledger en partie double transactionnel, remboursements, cash-out, billetterie, stockage et déploiement.
+**Non activ�s :** envoi SMS r�el sans fournisseur, connexion Google, KYC automatis� et stockage documentaire, ex�cution pawaPay, webhooks financiers, ledger en partie double transactionnel, remboursements, cash-out, billetterie et d�ploiement cloud. Voir `local-development.md` pour le parcours local et `deployment.md` pour Render/Neon.
 
 ## Architecture et conditions de production
 
 - L'app FlutterFlow appelle FastAPI en HTTPS. Aucun secret pawaPay dans le mobile.
-- PostgreSQL/Neon dédié, migrations versionnées, contraintes d'intégrité, sauvegardes et surveillance.
-- Validation stricte des autorisations serveur avant tout accès financier.
-- Les SMS OTP, retraits et portefeuilles sont activés uniquement après fournisseurs/contrats, sécurité et conformité validés.
-- Les codes chauffeur utilisés en public ne doivent pas être des jetons d'autorisation : seul le backend détermine l'identité du chauffeur.
+- PostgreSQL/Neon d�di�, migrations versionn�es, contraintes d'int�grit�, sauvegardes et surveillance.
+- Validation stricte des autorisations serveur avant tout acc�s financier.
+- Les SMS OTP, retraits et portefeuilles sont activ�s uniquement apr�s fournisseurs/contrats, s�curit� et conformit� valid�s.
+- Les codes chauffeur utilis�s en public ne doivent pas �tre des jetons d'autorisation : seul le backend d�termine l'identit� du chauffeur.
 
 ## Blocage restant
 
-Créer un projet Neon **hors organisation Vercel gérée**, dans un compte/organisation autorisé, ou choisir une autre base PostgreSQL de développement ; ne pas essayer indéfiniment la même commande refusée.
+Cr�er un projet Neon **hors organisation Vercel g�r�e**, dans un compte/organisation autoris�, ou choisir une autre base PostgreSQL de d�veloppement ; ne pas essayer ind�finiment la m�me commande refus�e.

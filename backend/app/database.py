@@ -1,4 +1,4 @@
-"""Connexion PostgreSQL côté serveur uniquement."""
+"""Connexion PostgreSQL c�t� serveur uniquement."""
 import os
 from functools import lru_cache
 from sqlalchemy import create_engine
@@ -21,3 +21,11 @@ def get_engine():
 
 def make_session():
     return sessionmaker(bind=get_engine(), expire_on_commit=False)
+
+
+def get_db():
+    with make_session()() as db:
+        try:
+            yield db
+        finally:
+            db.rollback()

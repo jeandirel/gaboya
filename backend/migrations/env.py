@@ -1,4 +1,4 @@
-"""Alembic configuration : exige une URL de base de développement."""
+"""Alembic configuration : exige une URL de base de d�veloppement."""
 import os
 from logging.config import fileConfig
 from alembic import context
@@ -10,7 +10,7 @@ config = context.config
 if config.config_file_name:
     fileConfig(config.config_file_name)
 target_metadata = Base.metadata
-url = os.environ.get("DATABASE_URL")
+url = os.environ.get("DATABASE_URL_UNPOOLED") or os.environ.get("DATABASE_URL")
 if not url:
     raise RuntimeError("DATABASE_URL requis pour appliquer les migrations")
 if url.startswith("postgresql://"):
