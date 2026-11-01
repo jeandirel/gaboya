@@ -29,8 +29,8 @@ jobs:
       APP_SECRET: ci-only-synthetic-secret-never-use-in-production-123456
       SMS_PROVIDER: test
       ALLOW_TEST_SMS: '1'
-      TEST_SMS_DIR: ${{ runner.temp }}/gaboya-sms
-      DEMO_OUTPUT: ${{ runner.temp }}/gaboya-demo.json
+      TEST_SMS_DIR: /tmp/gaboya-sms
+      DEMO_OUTPUT: /tmp/gaboya-demo.json
     defaults:
       run:
         working-directory: mobile
@@ -63,7 +63,8 @@ jobs:
         run: >-
           flutter test test/live_api_flow_test.dart
           --dart-define=GABOYA_RUN_LIVE_TESTS=true
-          --dart-define=GABOYA_TEST_SMS_DIR=${{ runner.temp }}/gaboya-sms
-          --dart-define=GABOYA_DEMO_FILE=${{ runner.temp }}/gaboya-demo.json
+          --dart-define=GABOYA_TEST_SMS_DIR=/tmp/gaboya-sms
+          --dart-define=GABOYA_DEMO_FILE=/tmp/gaboya-demo.json
       - name: Build web preview
         run: flutter build web --release
+
