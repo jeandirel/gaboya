@@ -29,7 +29,9 @@ def capabilities():
     return {
         "project": "GABOYA",
         "currency": "XAF",
-        "region": "Grand Libreville",
+        "region": "Gabon",
+        "national_catalogue": True,
+        "operational_coverage_from": "/v1/geo/coverage",
         "otp_ready": False,
         "payments_ready": False,
         "payments_live": False,
