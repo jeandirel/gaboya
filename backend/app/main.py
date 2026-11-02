@@ -8,8 +8,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from .database import make_session
 from .models import Driver, DriverCode, Vehicle
+from .geography import router as geography_router
 
 app = FastAPI(title="GABOYA API", version="0.1.0", docs_url="/docs" if os.getenv("APP_ENV") != "production" else None)
+app.include_router(geography_router)
 origins = [v.strip() for v in os.getenv("CORS_ORIGINS", "").split(",") if v.strip()]
 if origins:
     app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type", "Idempotency-Key"])
