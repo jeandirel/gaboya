@@ -64,6 +64,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: SignInPageWidget.routeName,
           path: SignInPageWidget.routePath,
           builder: (context, params) => SignInPageWidget(),
+        ),
+        FFRoute(
+          name: LocationPageWidget.routeName,
+          path: LocationPageWidget.routePath,
+          builder: (context, params) => LocationPageWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

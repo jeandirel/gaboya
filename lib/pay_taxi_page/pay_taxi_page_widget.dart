@@ -1,8 +1,11 @@
+import '/backend/api_requests/api_calls.dart';
+import '/backend/schema/structs/index.dart';
 import '/flutter_flow/ff_builtin_enums.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -158,15 +161,32 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                               ScanMode.QR,
                             );
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'QR lu. Vérification du chauffeur indisponible sans connexion serveur.',
-                                  style: TextStyle(),
-                                ),
-                                duration: Duration(milliseconds: 4000),
-                              ),
+                            _model.qrLookup =
+                                await GaboyaApiGroup.resolveDriverCall.call(
+                              code: _model.scannedCode,
                             );
+
+                            if ((_model.qrLookup?.succeeded ?? true)) {
+                              _model.verifiedDriver =
+                                  GaboyaVerifiedDriverStruct.maybeFromMap(
+                                      (_model.qrLookup?.jsonBody ?? ''));
+                              safeSetState(() {});
+                              _model.driverVerified =
+                                  GaboyaVerifiedDriverStruct.maybeFromMap(
+                                          (_model.qrLookup?.jsonBody ?? ''))
+                                      ?.verified;
+                              safeSetState(() {});
+                              _model.lookupFailed =
+                                  !GaboyaVerifiedDriverStruct.maybeFromMap(
+                                          (_model.qrLookup?.jsonBody ?? ''))!
+                                      .verified;
+                              safeSetState(() {});
+                            } else {
+                              _model.driverVerified = false;
+                              safeSetState(() {});
+                              _model.lookupFailed = true;
+                              safeSetState(() {});
+                            }
 
                             safeSetState(() {});
                           },
@@ -219,10 +239,18 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                       TextFormField(
                         controller: _model.driverCodeTextController,
                         focusNode: _model.driverCodeFocusNode,
+                        onChanged: (_) => EasyDebounce.debounce(
+                          '_model.driverCodeTextController',
+                          Duration(milliseconds: 2000),
+                          () async {
+                            _model.lookupFailed = false;
+                            safeSetState(() {});
+                          },
+                        ),
                         obscureText: false,
                         decoration: InputDecoration(
                           labelText: 'Identifiant chauffeur',
-                          hintText: 'Ex. GAB-4821',
+                          hintText: 'Ex. GBY-4821',
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Color(0x00000000),
@@ -328,6 +356,196 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                     ].divide(SizedBox(height: 16.0)),
                   ),
                 ),
+                FFButtonWidget(
+                  onPressed: () async {
+                    _model.manualLookup =
+                        await GaboyaApiGroup.resolveDriverCall.call(
+                      code: _model.driverCodeTextController.text,
+                    );
+
+                    if ((_model.manualLookup?.succeeded ?? true)) {
+                      _model.verifiedDriver =
+                          GaboyaVerifiedDriverStruct.maybeFromMap(
+                              (_model.manualLookup?.jsonBody ?? ''));
+                      safeSetState(() {});
+                      _model.driverVerified =
+                          GaboyaVerifiedDriverStruct.maybeFromMap(
+                                  (_model.manualLookup?.jsonBody ?? ''))
+                              ?.verified;
+                      safeSetState(() {});
+                      _model.lookupFailed =
+                          !GaboyaVerifiedDriverStruct.maybeFromMap(
+                                  (_model.manualLookup?.jsonBody ?? ''))!
+                              .verified;
+                      safeSetState(() {});
+                    } else {
+                      _model.driverVerified = false;
+                      safeSetState(() {});
+                      _model.lookupFailed = true;
+                      safeSetState(() {});
+                    }
+
+                    safeSetState(() {});
+                  },
+                  text: 'Vérifier le chauffeur',
+                  options: FFButtonOptions(
+                    width: double.infinity,
+                    height: 48.0,
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    iconPadding:
+                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    textStyle: TextStyle(
+                      color: FlutterFlowTheme.of(context).primary,
+                    ),
+                    borderRadius: BorderRadius.circular(14.0),
+                  ),
+                ),
+                if (_model.lookupFailed ?? true)
+                  Text(
+                    'Chauffeur introuvable, suspendu ou indisponible. Vérifiez le QR et réessayez.',
+                    style: FlutterFlowTheme.of(context).brandCaption.override(
+                          font: GoogleFonts.inter(
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FlutterFlowTheme.of(context)
+                                .brandCaption
+                                .fontStyle,
+                          ),
+                          color: FlutterFlowTheme.of(context).error,
+                          fontSize: 12.0,
+                          letterSpacing: 0.0,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FlutterFlowTheme.of(context)
+                              .brandCaption
+                              .fontStyle,
+                        ),
+                  ),
+                if (_model.driverVerified ?? true)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment:
+                            (FFMainAxisAlignment.start).flutterValue,
+                        crossAxisAlignment:
+                            (FFCrossAxisAlignment.start).flutterValue,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment:
+                                (FFMainAxisAlignment.start).flutterValue,
+                            crossAxisAlignment:
+                                (FFCrossAxisAlignment.center).flutterValue,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Icon(
+                                Icons.verified_user,
+                                color: FlutterFlowTheme.of(context).success,
+                                size: 20.0,
+                              ),
+                              Text(
+                                'Chauffeur vérifié',
+                                style: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .override(
+                                      font: GoogleFonts.manrope(
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .fontStyle,
+                                      ),
+                                      letterSpacing: 0.0,
+                                      fontWeight: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .fontWeight,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .fontStyle,
+                                    ),
+                              ),
+                            ].divide(SizedBox(width: 8.0)),
+                          ),
+                          Text(
+                            _model.verifiedDriver!.displayName,
+                            style: FlutterFlowTheme.of(context)
+                                .brandBody
+                                .override(
+                                  font: GoogleFonts.inter(
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .brandBody
+                                        .fontStyle,
+                                  ),
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryText,
+                                  fontSize: 15.0,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FontWeight.normal,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .brandBody
+                                      .fontStyle,
+                                ),
+                          ),
+                          Text(
+                            'Référence : ${_model.verifiedDriver?.driverId}',
+                            style: FlutterFlowTheme.of(context)
+                                .brandCaption
+                                .override(
+                                  font: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .brandCaption
+                                        .fontStyle,
+                                  ),
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
+                                  fontSize: 12.0,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .brandCaption
+                                      .fontStyle,
+                                ),
+                          ),
+                          Text(
+                            'Véhicule : ${valueOrDefault<String>(
+                              getJsonField(
+                                _model.verifiedDriver?.vehicle,
+                                r'''$.description''',
+                              )?.toString(),
+                              'Informations indisponibles',
+                            )}',
+                            style: FlutterFlowTheme.of(context)
+                                .brandCaption
+                                .override(
+                                  font: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .brandCaption
+                                        .fontStyle,
+                                  ),
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
+                                  fontSize: 12.0,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .brandCaption
+                                      .fontStyle,
+                                ),
+                          ),
+                        ].divide(SizedBox(height: 8.0)),
+                      ),
+                    ),
+                  ),
                 Container(
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).accent3,
@@ -350,7 +568,7 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                         ),
                         Expanded(
                           child: Text(
-                            'Démonstration : aucun paiement réel ne sera initié. Le statut sera toujours à vérifier auprès du prestataire.',
+                            'Paiement bientôt disponible. Aucun paiement ne sera initié tant que le service Mobile Money n’est pas activé.',
                             style: FlutterFlowTheme.of(context)
                                 .brandCaption
                                 .override(
@@ -378,21 +596,17 @@ class _PayTaxiPageWidgetState extends State<PayTaxiPageWidget> {
                 Spacer(),
                 FFButtonWidget(
                   onPressed: () async {
-                    if (_model.formKey.currentState == null ||
-                        !_model.formKey.currentState!.validate()) {
-                      return;
-                    }
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          'Démo uniquement : aucun paiement initié',
+                          'Paiement bientôt disponible',
                           style: TextStyle(),
                         ),
                         duration: Duration(milliseconds: 4000),
                       ),
                     );
                   },
-                  text: 'Continuer',
+                  text: 'Paiement bientôt disponible',
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 54.0,
