@@ -16,6 +16,9 @@ def upgrade():
     bind = op.get_bind()
     for table in (Province.__table__, City.__table__, TransportPoint.__table__):
         table.create(bind=bind, checkfirst=True)
+    if bind.dialect.name == "postgresql":
+        for name in ("geo_provinces", "geo_cities", "geo_transport_points"):
+            op.execute(f"ALTER TABLE {name} ENABLE ROW LEVEL SECURITY")
 
 def downgrade():
     bind = op.get_bind()
